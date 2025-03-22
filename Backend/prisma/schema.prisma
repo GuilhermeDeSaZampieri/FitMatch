@@ -1,0 +1,125 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Users {
+  id String @id @default(uuid()) 
+  name String @db.VarChar(600)
+  email String @unique
+  cpf String @unique
+  password String
+  avatar String
+  xp Int
+  level Int
+  deleteAt DateTime
+  
+
+  UserAchievements UserAchievements[]
+  Preferences Preferences[]
+  ActivityParticipants ActivityParticipants[]
+  Activities Activities[]
+  @@map("users")
+}
+
+model UserAchievements{
+  id          String @id @default(uuid())
+  Users Users @relation(fields: [userId], references: [id])
+  userId String
+  Achievements Achievements @relation(fields: [achievementId], references: [id])
+  achievementId String
+  @@map("userAchievements")
+}
+
+model Achievements{
+  id          String @id @default(uuid())
+  name String
+  criterion String
+
+  UserAchievements UserAchievements[]
+  @@map("achievements")
+}
+
+
+model Preferences{
+  id          String @id @default(uuid())
+  ActivityTypes ActivityTypes @relation(fields: [typeId],  references: [id])
+  typeId String
+  Users Users @relation(fields: [userId], references: [id])
+  userId String
+
+  @@map("preferences")
+
+}
+
+model Activities{
+  id          String @id @default(uuid())
+  title       String
+  description String
+
+  ActivityTypes ActivityTypes @relation(fields: [type], references: [id])
+  type String 
+
+  Users Users @relation(fields: [userId], references: [id])
+  userId String
+
+
+  ActivityParticipants ActivityParticipants[]
+
+  confirmationCode String
+  image String
+  scheduledDate DateTime
+  createdAt DateTime
+  deletedAt DateTime
+  completedAt DateTime
+  private Boolean
+  creatorId String @default(uuid())
+
+  ActivityAddresses ActivityAddresses?
+
+
+  @@map("activities")
+}
+
+model ActivityParticipants{
+  id          String @id @default(uuid())
+
+  Activities Activities @relation(fields: [activityId], references: [id])
+  activityId String 
+  Users Users @relation(fields: [userId], references: [id])
+  userId String
+
+  approved Boolean
+  confirmedAt DateTime
+  @@map("activityParticipants")
+}
+
+model ActivityTypes{
+  id          String @id @default(uuid())
+  name String
+  description String
+  image String
+
+  Activities Activities[]
+  Preferences Preferences[]
+  @@map("activityTypes")
+} 
+
+model ActivityAddresses{
+  id          String @id @default(uuid())
+
+  Activities Activities @relation(fields: [activityId], references: [id])
+  activityId String @unique
+
+  latitude Float
+  longitude Float
+
+  @@map("activityAddresses")
+}
+
