@@ -18,7 +18,7 @@ model Users {
   avatar String
   xp Int
   level Int
-  deleteAt DateTime
+  deleteAt DateTime?
   
 
   UserAchievements UserAchievements[]
