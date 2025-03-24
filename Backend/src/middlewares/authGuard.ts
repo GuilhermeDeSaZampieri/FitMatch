@@ -1,11 +1,10 @@
+import { error } from "console";
 import { Response,Request,NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 const jwtSecret = process.env.JWT_SECRET!; //LEmbra do PONTO!!!
 
 declare module "express-serve-static-core"{ 
-    // Isso daqui extende a entidade request do express, para eu poder acessar o user
-    //id pelo meu controller
     interface Request{
         userId: string,
     }
@@ -19,7 +18,7 @@ export default function autoGuard(
     const authHeader = req.headers.authorization;
 
     if(!authHeader){
-        resp.status(401).send("Você precisa estar autorizado para acesar este endpoint.");
+        resp.status(401).json({error:"Você precisa estar autorizado para acesar este endpoint."});
         return;
     }
 
@@ -31,6 +30,7 @@ export default function autoGuard(
             id: string;
             name: string;
             email: string;
+            cpf: string;
             password: string;
             iat: number;
             exp: number;
@@ -39,7 +39,7 @@ export default function autoGuard(
         req.userId = user.id;
         next();
     }catch(error: any){
-        resp.status(401).send("token invalido ou expirado");
+        resp.status(401).json({error:"token invalido ou expirado"});
         return;
     }
 
