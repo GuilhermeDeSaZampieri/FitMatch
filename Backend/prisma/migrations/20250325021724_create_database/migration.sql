@@ -45,14 +45,14 @@ CREATE TABLE "activities" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "type" TEXT NOT NULL,
+    "typeId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "confirmationCode" TEXT NOT NULL,
     "image" TEXT NOT NULL,
     "scheduledDate" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL,
-    "deletedAt" TIMESTAMP(3) NOT NULL,
-    "completedAt" TIMESTAMP(3) NOT NULL,
+    "deletedAt" TIMESTAMP(3),
+    "completedAt" TIMESTAMP(3),
     "private" BOOLEAN NOT NULL,
     "creatorId" TEXT NOT NULL,
 
@@ -112,7 +112,7 @@ ALTER TABLE "preferences" ADD CONSTRAINT "preferences_typeId_fkey" FOREIGN KEY (
 ALTER TABLE "preferences" ADD CONSTRAINT "preferences_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "activities" ADD CONSTRAINT "activities_type_fkey" FOREIGN KEY ("type") REFERENCES "activityTypes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "activities" ADD CONSTRAINT "activities_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "activityTypes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "activities" ADD CONSTRAINT "activities_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

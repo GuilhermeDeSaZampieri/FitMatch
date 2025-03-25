@@ -1,5 +1,6 @@
 import { Express, Router } from "express";
 import authGuard from "../middlewares/authGuard";
+import {activityCreate, TypeCreate} from "../services/activityServices";
 
 
 
@@ -40,8 +41,24 @@ const activityController = (server: Express) => {
         
     });
 
+    router.post("/newType", async (req ,resp)=>{
+        try{
+            const data  = req.body;
+            const create = await TypeCreate(data);
+            resp.status(200).send(create);       
+        }catch(error: any){
+            resp.status(400).json({error:"Errou!"});
+        }
+    });
+
     router.post("/new", async (req ,resp)=>{
-        
+        try{
+            const data  = req.body;
+            const create = await activityCreate(data);
+            resp.status(200).send(create);       
+        }catch(error: any){
+            resp.status(400).json({error:"Errou!"});
+        }
     });
 
     router.post("/{id}/subscribe", async (req ,resp)=>{
