@@ -1,6 +1,6 @@
 import { Express, Router, Request, Response, response } from "express";
 import authGuard from "../middlewares/authGuard";
-import { deleteUser, getUsersByid , update} from "../services/userServices";
+import { deleteUserService, getUsersByid , updateUserService} from "../services/userServices";
 import userUpdateValidation from "../validations/userUpdateValidation";
 import validateRequestBody from "../middlewares/authValidation";
 
@@ -44,7 +44,7 @@ const userController = (server: Express) => {
         try{
             const {userId}=req; 
             const data = req.body;
-            const updatedUser = await update(data, userId);
+            const updatedUser = await updateUserService(data, userId);
             const {password, deleteAt, ...user} = updatedUser;
             res.status(200).json(user);
         
@@ -67,7 +67,7 @@ const userController = (server: Express) => {
     router.delete("/deactivate", async (req ,res)=>{
         try{
             const {userId}=req; 
-            await deleteUser(userId);
+            await deleteUserService(userId);
             res.status(200).json({message:"Conta desativada com sucessso"});
         
         }catch(error: any)

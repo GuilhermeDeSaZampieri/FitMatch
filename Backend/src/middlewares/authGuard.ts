@@ -1,8 +1,7 @@
-import { error } from "console";
 import { Response,Request,NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const jwtSecret = process.env.JWT_SECRET!; //LEmbra do PONTO!!!
+const jwtSecret = process.env.JWT_SECRET!; 
 
 declare module "express-serve-static-core"{ 
     interface Request{
@@ -22,10 +21,10 @@ export default function autoGuard(
         return;
     }
 
-    const token = authHeader.replace("Bearer ", "");//precisa do espaço
+    const token = authHeader.replace("Bearer ", "");
 
     try{
-        //Agora o user possui a propriedade de todos os campos do token do usuario
+        
         const user = jwt.verify(token, jwtSecret) as {
             id: string;
             name: string;

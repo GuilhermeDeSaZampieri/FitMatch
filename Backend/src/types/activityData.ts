@@ -3,14 +3,13 @@ type activityData ={
     description: string,
     typeId: string,
     userId: string,
-    address: {},
+    address: { latitude: number, longitude: number},
     confirmationCode: string,
-
     image: string,
-    scheduledDate: string, 
-    createdAt: string,
-    deletedAt: string | null,
-    completedAt: string | null,
+    scheduledDate: Date, 
+    createdAt: Date,
+    deletedAt: Date | null,
+    completedAt: Date | null,
     private: boolean,
 }
 export default activityData;

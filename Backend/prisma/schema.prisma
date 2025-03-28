@@ -21,18 +21,18 @@ model Users {
   deleteAt DateTime?
   
 
-  UserAchievements UserAchievements[]
-  Preferences Preferences[]
-  ActivityParticipants ActivityParticipants[]
-  Activities Activities[]
+  userAchievements UserAchievements[]
+  preferences Preferences[]
+  activityParticipants ActivityParticipants[]
+  activities Activities[]
   @@map("users")
 }
 
 model UserAchievements{
   id          String @id @default(uuid())
-  Users Users @relation(fields: [userId], references: [id])
+  users Users @relation(fields: [userId], references: [id])
   userId String
-  Achievements Achievements @relation(fields: [achievementId], references: [id])
+  achievements Achievements @relation(fields: [achievementId], references: [id])
   achievementId String
   @@map("userAchievements")
 }
@@ -42,16 +42,16 @@ model Achievements{
   name String
   criterion String
 
-  UserAchievements UserAchievements[]
+  userAchievements UserAchievements[]
   @@map("achievements")
 }
 
 
 model Preferences{
   id          String @id @default(uuid())
-  ActivityTypes ActivityTypes @relation(fields: [typeId],  references: [id])
+  activityTypes ActivityTypes @relation(fields: [typeId],  references: [id])
   typeId String
-  Users Users @relation(fields: [userId], references: [id])
+  users Users @relation(fields: [userId], references: [id])
   userId String
 
   @@map("preferences")
@@ -63,14 +63,14 @@ model Activities{
   title       String
   description String
 
-  ActivityTypes ActivityTypes @relation(fields: [typeId], references: [id])
-  typeId String 
+  activityTypes ActivityTypes @relation(fields: [typeId], references: [id])
+  typeId String  
 
-  Users Users @relation(fields: [userId], references: [id])
-  userId String
+  creator Users @relation(fields: [creatorId], references: [id])
+  creatorId String 
 
 
-  ActivityParticipants ActivityParticipants[]
+  activityParticipants ActivityParticipants[]
 
   confirmationCode String
   image String
@@ -79,9 +79,8 @@ model Activities{
   deletedAt DateTime?
   completedAt DateTime?
   private Boolean
-  creatorId String @default(uuid())
 
-  ActivityAddresses ActivityAddresses?
+  activityAddresses ActivityAddresses?
 
 
   @@map("activities")
@@ -90,9 +89,9 @@ model Activities{
 model ActivityParticipants{
   id          String @id @default(uuid())
 
-  Activities Activities @relation(fields: [activityId], references: [id])
+  activities Activities @relation(fields: [activityId], references: [id])
   activityId String 
-  Users Users @relation(fields: [userId], references: [id])
+  users Users @relation(fields: [userId], references: [id])
   userId String
 
   approved Boolean
@@ -106,15 +105,15 @@ model ActivityTypes{
   description String
   image String
 
-  Activities Activities[]
-  Preferences Preferences[]
+  activities Activities[]
+  preferences Preferences[]
   @@map("activityTypes")
 } 
 
 model ActivityAddresses{
   id          String @id @default(uuid())
 
-  Activities Activities @relation(fields: [activityId], references: [id])
+  activities Activities @relation(fields: [activityId], references: [id])
   activityId String @unique
 
   latitude Float

@@ -1,5 +1,5 @@
 import { Express, Router } from "express";
-import { createUser } from "../services/authServices";
+import { createUserService } from "../services/authServices";
 import { login } from "../services/authServices";
 import authValidation from "../validations/userValidation";
 
@@ -13,9 +13,10 @@ const authController = (server: Express) => {
     router.post("/register", validateRequestBody(authValidation), async (req, res) =>{
 
         try{
+            
             const userData = req.body;
         
-            await createUser(userData);
+            await createUserService(userData);
             res.status(201).json({message: "Usuário criado com sucesso."});
 
         }catch(error: any)

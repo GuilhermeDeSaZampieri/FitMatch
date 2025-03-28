@@ -1,7 +1,7 @@
 import prisma from "../prisma/prismaClient";
 import userData from "../types/userData";
 
-export async function cadastrar(data: userData) {
+export async function createUserRepository(data: userData) {
     
     return await  prisma.users.create(
         {
@@ -17,7 +17,7 @@ export async function cadastrar(data: userData) {
     }});
 }
 
-export async function updateUser(data: userData, id:string) {
+export async function updateUserRepository(data: userData, id:string) {
     
     return await  prisma.users.update({
             where:{

@@ -1,5 +1,7 @@
-import { getByEmail, getUserByid, updateUser, softDeleteUser } from "../repository/userRepository";
+import { getByEmail, getUserByid, updateUserRepository, softDeleteUser } from "../repository/userRepository";
 import bcrypt from "bcryptjs";
+
+
 export async function getUsersByid(id: string){
     const userFind  = await getUserByid(id);
     
@@ -14,14 +16,15 @@ export async function getUsersByid(id: string){
     return userFind;
 }
 
-export async function update(data: any, id: string){
+
+export async function updateUserService(data: any, id: string){
     
     const encryptedPassword = await bcrypt.hash(data.password, 10); 
     data.password = encryptedPassword;
 
     await verifyIfUserEmailExists(data.email);
 
-    const userFind  = await updateUser(data, id);
+    const userFind  = await updateUserRepository(data, id);
 
     if(!userFind){
         throw new Error("Usuário não encontrado");
@@ -34,7 +37,7 @@ export async function update(data: any, id: string){
     return userFind;
 }
 
-export async function deleteUser(id: string){
+export async function deleteUserService(id: string){
     
     const userFind = await softDeleteUser(id);
 

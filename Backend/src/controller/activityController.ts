@@ -1,6 +1,9 @@
 import { Express, Router } from "express";
 import authGuard from "../middlewares/authGuard";
-import {activityCreate, TypeCreate} from "../services/activityServices";
+import {createActivityService, getActivityService} from "../services/activityServices";
+import validateRequestBody from "../middlewares/authValidation";
+import activityValidation from "../validations/activityValidations";
+import { getTypesActivityService } from "../services/activityTypeService";
 
 
 
@@ -9,83 +12,125 @@ const activityController = (server: Express) => {
 
     router.use(authGuard);
 
-    router.get("/types", async (req ,resp)=>{
-        
-    });
-
-    router.get("", async (req ,resp)=>{
-        
-    });
-
-    router.get("/all", async (req ,resp)=>{
-        
-    });
-
-    router.get("/user/creator", async (req ,resp)=>{
-        
-    });
-
-    router.get("/user/creator/all", async (req ,resp)=>{
-        
-    });
-
-    router.get("/user/participant", async (req ,resp)=>{
-        
-    });
-
-    router.get("/user/participant/all", async (req ,resp)=>{
-        
-    });
-
-    router.get("/{id}/participants", async (req ,resp)=>{
-        
-    });
-
-    router.post("/newType", async (req ,resp)=>{
+    router.get("/types", async (req ,res)=>{
         try{
-            const data  = req.body;
-            const create = await TypeCreate(data);
-            resp.status(200).send(create);       
-        }catch(error: any){
-            resp.status(400).json({error:"Errou!"});
+        const activityTypes = await getTypesActivityService(); 
+        res.status(200).json(activityTypes);
+        return;
+        }
+        catch(error: any){
+            console.log(error);
+
+            if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
+                res.status(403).json({error: "Autenticação necessária."})    
+            }
+            
+            if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
+                res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
+            }
+            res.status(500).json({error:"Erro inesperado"});
         }
     });
 
-    router.post("/new", async (req ,resp)=>{
+    router.get("", async (req ,res)=>{
         try{
+            const {page, pageSize, typeId, orderBy, order } = req.query as {
+                page: string,
+                pageSize: string,
+                typeId: string,
+                orderBy: string ,
+                order: "asc" | "desc",
+            };
+            const activityTypes = await getActivityService(parseInt(page)|| 1, parseInt(pageSize) || 10, typeId, orderBy, order); 
+            res.status(200).json(activityTypes);
+            return;
+            }
+            catch(error: any){
+                console.log(error);
+    
+                if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
+                    res.status(403).json({error: "Autenticação necessária."})    
+                }
+                
+                if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
+                    res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
+                }
+                res.status(500).json({error:"Erro inesperado"});
+            }
+    });
+
+    router.get("/all", async (req ,res)=>{
+        
+    });
+
+    router.get("/user/creator", async (req ,res)=>{
+        
+    });
+
+    router.get("/user/creator/all", async (req ,res)=>{
+        
+    });
+
+    router.get("/user/participant", async (req ,res)=>{
+        
+    });
+
+    router.get("/user/participant/all", async (req ,res)=>{
+        
+    });
+
+    router.get("/{id}/participants", async (req ,res)=>{
+        
+    });
+
+    router.post("/new", validateRequestBody(activityValidation), async  (req ,res)=>{
+        try{
+
             const data  = req.body;
-            const create = await activityCreate(data);
-            resp.status(200).send(create);       
+            const userId = req.userId;
+
+            const create = await createActivityService(data, userId);
+            res.status(200).send(create);       
+
         }catch(error: any){
-            resp.status(400).json({error:"Errou!"});
+            console.log(error);
+
+            if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
+                res.status(403).json({error: "Autenticação necessária."})    
+            }
+            
+            if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
+                res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
+            }
+            res.status(500).json({error:"Erro inesperado"});
         }
     });
 
-    router.post("/{id}/subscribe", async (req ,resp)=>{
+    router.post("/{id}/subscribe", async (req ,res)=>{
         
     });
 
-    router.put("/{id}/update", async (req ,resp)=>{
+    router.put("/{id}/update", async (req ,res)=>{
         
     });
 
-    router.put("/{id}/conclude", async (req ,resp)=>{
+    router.put("/{id}/conclude", async (req ,res)=>{
         
     });
 
-    router.put("/{id}/approve", async (req ,resp)=>{
+    router.put("/{id}/approve", async (req ,res)=>{
         
     });
 
-    router.put("/{id}/check-in", async (req ,resp)=>{
+    router.put("/{id}/check-in", async (req ,res)=>{
         
     });
 
-    router.put("/{id}/unsubscribe", async (req ,resp)=>{
+    router.put("/{id}/unsubscribe", async (req ,res)=>{
         
     });
 
-    router.put("/{id}/delete", async (req ,resp)=>{
+    router.put("/{id}/delete", async (req ,res)=>{
         
     });
 

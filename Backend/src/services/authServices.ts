@@ -1,10 +1,10 @@
-import { cadastrar, getByCpf, getByEmail } from "../repository/userRepository";
+import { createUserRepository, getByCpf, getByEmail } from "../repository/userRepository";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 const jwtSecret = process.env.JWT_SECRET!; 
 
 
-export async function createUser(
+export async function createUserService(
     data: {
         name: string,
         email: string,
@@ -27,7 +27,7 @@ export async function createUser(
         throw new Error("E-mail já existente");
     }
 
-    const userSaved = await cadastrar(data);
+    const userSaved = await createUserRepository(data);
     return  userSaved.id 
 }
 
