@@ -41,6 +41,61 @@ export async function softDeleteUser(id:string) {
 }
 
 
+export async function getAllActivityCreateByUserRepository(id:string) {
+    return await prisma.activities.findMany({
+        where:{
+            creatorId: id
+        }
+    })
+}
+
+export async function getActivityCreateByUserRepository(
+    page: number,
+    pageSize: number,
+    id: string) {
+
+    const activies =  await prisma.activities.findMany({
+        skip: (page-1)* pageSize,
+        take: pageSize,
+        omit:{
+            creatorId: true,
+        },
+        where:{
+            creatorId: id,
+        },
+        include:{   
+            activityAddresses:{
+                select:{
+                    latitude: true,
+                    longitude: true,
+                }
+            },
+            creator:{
+                select:{
+                    id: true,
+                    name: true,
+                    avatar: true,
+                }
+            }
+        },
+        
+    });
+
+    const totalActivies = await prisma.activities.count({
+        where:{
+            creatorId: id,
+        },
+    })
+    const totalPages = Math.ceil(totalActivies / pageSize)
+    return{
+        page,
+        pageSize,
+        totalActivies,
+        totalPages,
+        activies
+    }
+
+}
 
 
 
@@ -68,3 +123,5 @@ export async function getByCpf(cpf: string){
         }
     });
 }
+
+

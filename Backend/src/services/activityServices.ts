@@ -1,4 +1,4 @@
-import { createActivityRepository, getActivityRepository } from "../repository/activityRepository";
+import { createActivityRepository, getActivityRepository, getActivityAllRepository } from "../repository/activityRepository";
 import activityData from "../types/activityData";
 import { createActivityAddressesService } from "./ActivityAddressesService";
 import { getUsersByid } from "./userServices";
@@ -55,7 +55,17 @@ export async function getActivityService(
     orderBy: string,
     order: "asc" | "desc") 
 {
-    const all = getActivityRepository(page, pageSize, typeId, orderBy, order);
+    const all = await getActivityRepository(page, pageSize, typeId, orderBy, order);
+    
+    return all;
+}
+
+export async function getActivityAllService( 
+    typeId: string,
+    orderBy: string,
+    order: "asc" | "desc"){
+
+    const all = await getActivityAllRepository(typeId, orderBy, order);
     
     return all;
 }

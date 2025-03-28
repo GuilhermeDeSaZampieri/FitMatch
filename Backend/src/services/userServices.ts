@@ -1,4 +1,4 @@
-import { getByEmail, getUserByid, updateUserRepository, softDeleteUser } from "../repository/userRepository";
+import { getByEmail, getUserByid, updateUserRepository, softDeleteUser, getActivityCreateByUserRepository, getAllActivityCreateByUserRepository } from "../repository/userRepository";
 import bcrypt from "bcryptjs";
 
 
@@ -58,6 +58,18 @@ async function verifyIfUserEmailExists(email: string){
         
     }
 }
+
+export async function getActivityCreateByUserService(page: number,pageSize: number,id:string){
+    const all  =  await getActivityCreateByUserRepository(page,pageSize,id);
+ 
+    return all;
+}
+
+export async function getAllActivityCreateByUserService(id:string) {
+    return await getAllActivityCreateByUserRepository(id);
+
+}
+
 
 
 

@@ -1,9 +1,10 @@
 import { Express, Router } from "express";
 import authGuard from "../middlewares/authGuard";
-import {createActivityService, getActivityService} from "../services/activityServices";
+import {createActivityService, getActivityAllService, getActivityService} from "../services/activityServices";
 import validateRequestBody from "../middlewares/authValidation";
 import activityValidation from "../validations/activityValidations";
 import { getTypesActivityService } from "../services/activityTypeService";
+import { getActivityCreateByUserService, getAllActivityCreateByUserService } from "../services/userServices";
 
 
 
@@ -41,10 +42,9 @@ const activityController = (server: Express) => {
                 orderBy: string ,
                 order: "asc" | "desc",
             };
-            const activityTypes = await getActivityService(parseInt(page)|| 1, parseInt(pageSize) || 10, typeId, orderBy, order); 
-            res.status(200).json(activityTypes);
-            return;
-            }
+            const activities = await getActivityService(parseInt(page)|| 1, parseInt(pageSize) || 10, typeId, orderBy, order);  
+            res.status(200).json(activities)
+        }
             catch(error: any){
                 console.log(error);
     
@@ -60,15 +60,69 @@ const activityController = (server: Express) => {
     });
 
     router.get("/all", async (req ,res)=>{
-        
+        try{
+            const {typeId, orderBy, order } = req.query as {
+                typeId: string,
+                orderBy: string ,
+                order: "asc" | "desc",
+            };
+            const activities = await getActivityAllService(typeId, orderBy, order);  
+            res.status(200).json(activities);
+        }
+            catch(error: any){
+                console.log(error);
+    
+                if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
+                    res.status(403).json({error: "Autenticação necessária."})    
+                }
+                
+                if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
+                    res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
+                }
+                res.status(500).json({error:"Erro inesperado"});
+            }
     });
 
     router.get("/user/creator", async (req ,res)=>{
-        
+        try{
+            const {page, pageSize} = req.query as {
+                page   : string,
+                pageSize: string ,
+            };
+            const activities = await getActivityCreateByUserService(parseInt(page), parseInt(pageSize), req.userId);  
+            res.status(200).json(activities);
+        }
+            catch(error: any){
+                console.log(error);
+    
+                if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
+                    res.status(403).json({error: "Autenticação necessária."})    
+                }
+                
+                if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
+                    res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
+                }
+                res.status(500).json({error:"Erro inesperado"});
+            }
     });
 
     router.get("/user/creator/all", async (req ,res)=>{
-        
+        try{
+            const activities = await getAllActivityCreateByUserService(req.userId);  
+            res.status(200).json(activities);
+        }
+            catch(error: any){
+                console.log(error);
+    
+                if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
+                    res.status(403).json({error: "Autenticação necessária."})    
+                }
+                
+                if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
+                    res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
+                }
+                res.status(500).json({error:"Erro inesperado"});
+            }
     });
 
     router.get("/user/participant", async (req ,res)=>{
