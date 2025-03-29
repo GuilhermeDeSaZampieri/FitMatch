@@ -55,7 +55,7 @@ model Preferences{
   userId String
 
   @@map("preferences")
-
+  @@unique([typeId,userId])
 }
 
 model Activities{
@@ -92,22 +92,24 @@ model ActivityParticipants{
   activities Activities @relation(fields: [activityId], references: [id])
   activityId String 
   users Users @relation(fields: [userId], references: [id])
-  userId String
+  userId String 
 
-  approved Boolean
-  confirmedAt DateTime
+  approved Boolean @default(false)
+  confirmedAt DateTime?
   @@map("activityParticipants")
+  @@unique([activityId, userId])
 }
 
 model ActivityTypes{
   id          String @id @default(uuid())
-  name String
-  description String
+  name String @unique
+  description String @unique
   image String
 
   activities Activities[]
   preferences Preferences[]
   @@map("activityTypes")
+  
 } 
 
 model ActivityAddresses{

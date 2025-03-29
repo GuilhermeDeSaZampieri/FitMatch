@@ -3,6 +3,7 @@ import authGuard from "../middlewares/authGuard";
 import { deleteUserService, getUsersByid , updateUserService} from "../services/userServices";
 import userUpdateValidation from "../validations/userUpdateValidation";
 import validateRequestBody from "../middlewares/authValidation";
+import { getUserPreferencesService, preferenceService } from "../services/preferenceService";
 
 
 const userController = (server: Express) => {
@@ -29,12 +30,38 @@ const userController = (server: Express) => {
     });
 
     router.get("/preferences", async (req ,res)=>{
-
+        try{
+            
+            res.status(200).json(await getUserPreferencesService());
+        
+        }catch(error: any)
+        {
+            if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
+                res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."});
+                return;
+            }
+            res.status(500).json({error:"Erro inesperado."});
+        }
     });
 
     router.post("/preferences/define", async (req ,res)=>{
+        try{
+                    const data = {
+                        userId: req.userId,
+                        
+                        typeId: req.body
+                    }        
         
+                    const create = await preferenceService(data);
+                    res.status(200).send(create);       
+        
+                }catch(error: any){
+                    console.log(error);
+                    (error.code) ? res.status(500).json({error:`error:${error.code}`}) : res.status(403).json({error:error.messsage});        
+                }
     });
+
+    
 
     router.put("/avatar", async (req ,res)=>{
         

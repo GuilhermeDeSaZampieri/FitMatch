@@ -1,5 +1,6 @@
-import { createActivityRepository, getActivityRepository, getActivityAllRepository } from "../repository/activityRepository";
+import { createActivityRepository, getActivityRepository, getActivityAllRepository, subscribeActivityRepository, updateActivityRepository } from "../repository/activityRepository";
 import activityData from "../types/activityData";
+import activityPartipants from "../types/activityParticipants";
 import { createActivityAddressesService } from "./ActivityAddressesService";
 import { getUsersByid } from "./userServices";
 
@@ -48,6 +49,27 @@ export async function createActivityService(data: activityData, userId: string){
     };
 }
 
+
+
+export async function updateActivityService(data: activityData, id: string){
+    
+
+    const activityFind  = await updateActivityRepository(data, id);
+
+    if(!activityFind){
+        throw new Error("Atividade não encontrada");
+    } else if(activityFind.deletedAt){
+        throw new Error("Esta conta foi desativada e não pode ser ultilizada");
+    }
+
+    return activityFind;
+}
+
+
+export async function subscribeActivityService(data: activityPartipants) {
+    return await subscribeActivityRepository(data)
+}
+
 export async function getActivityService(
     page: number,
     pageSize: number,
@@ -79,4 +101,6 @@ function creatorCode() {
     c = c.substring(0, 6);
     return c;
 }
+
+
 

@@ -3,7 +3,7 @@ import express, {json} from "express";
 import authController from "../src/controller/authController";
 import activityController from "./controller/activityController";
 import userController from "./controller/userController";
-import { createActivityTypeService } from "./services/activityTypeService";
+import { createBucket } from "./services/s3-services";
 
 
 async function init() 
@@ -17,13 +17,7 @@ async function init()
     authController(server);
     userController(server);
 
-    await createActivityTypeService([
-        {
-            name: "Correr",
-            description: "Correr muito",
-            image: 'ImagemPelado'
-        }
-    ]);
+    createBucket();
 
     const port = process.env.PORT;
 

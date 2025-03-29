@@ -86,12 +86,16 @@ export async function getActivityCreateByUserRepository(
             creatorId: id,
         },
     })
+    const previous = page - 1;
+    const next = page +1;
     const totalPages = Math.ceil(totalActivies / pageSize)
     return{
         page,
         pageSize,
         totalActivies,
         totalPages,
+        previous,
+        next,
         activies
     }
 

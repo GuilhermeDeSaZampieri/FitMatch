@@ -1,6 +1,6 @@
 import { Express, Router } from "express";
 import authGuard from "../middlewares/authGuard";
-import {createActivityService, getActivityAllService, getActivityService} from "../services/activityServices";
+import {createActivityService, getActivityAllService, getActivityService, subscribeActivityService} from "../services/activityServices";
 import validateRequestBody from "../middlewares/authValidation";
 import activityValidation from "../validations/activityValidations";
 import { getTypesActivityService } from "../services/activityTypeService";
@@ -133,7 +133,7 @@ const activityController = (server: Express) => {
         
     });
 
-    router.get("/{id}/participants", async (req ,res)=>{
+    router.get("/id:/participants", async (req ,res)=>{
         
     });
 
@@ -160,31 +160,47 @@ const activityController = (server: Express) => {
         }
     });
 
-    router.post("/{id}/subscribe", async (req ,res)=>{
+
+
+    router.post("/:id/subscribe", async (req ,res)=>{
+        try{
+            const data = {
+                userId: req.userId,
+                
+                activityId: req.params.id
+            }
+
+
+            const create = await subscribeActivityService(data);
+            res.status(200).send(create);       
+
+        }catch(error: any){
+            console.log(error);
+            (error.code) ? res.status(500).json({error:`error:${error.code}`}) : res.status(403).json({error:error.messsage});        
+        }
+    });
+
+    router.put("/id:/update", async (req ,res)=>{
         
     });
 
-    router.put("/{id}/update", async (req ,res)=>{
+    router.put("/id:/conclude", async (req ,res)=>{
         
     });
 
-    router.put("/{id}/conclude", async (req ,res)=>{
+    router.put("/id:/approve", async (req ,res)=>{
         
     });
 
-    router.put("/{id}/approve", async (req ,res)=>{
+    router.put("/id:/check-in", async (req ,res)=>{
         
     });
 
-    router.put("/{id}/check-in", async (req ,res)=>{
+    router.put("/id:/unsubscribe", async (req ,res)=>{
         
     });
 
-    router.put("/{id}/unsubscribe", async (req ,res)=>{
-        
-    });
-
-    router.put("/{id}/delete", async (req ,res)=>{
+    router.put("/id:/delete", async (req ,res)=>{
         
     });
 
