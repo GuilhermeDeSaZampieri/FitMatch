@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+const prisma = new PrismaClient() // Ativa os logs
 async function main() {
   await prisma.activityTypes.upsert({
     where:{

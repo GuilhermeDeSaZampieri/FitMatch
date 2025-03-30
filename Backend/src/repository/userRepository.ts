@@ -27,6 +27,24 @@ export async function updateUserRepository(data: userData, id:string) {
         })
 }
 
+export async function updateUserAvatar(avatar:string, id: string) {
+    
+    const updateAvatar = await  prisma.users.update({
+            where:{
+                id: id,
+            },
+            data:{
+                avatar: avatar
+            } 
+        })
+
+    return{
+        avatar: updateAvatar.avatar
+    }
+}
+
+
+
 
 export async function softDeleteUser(id:string) {
     

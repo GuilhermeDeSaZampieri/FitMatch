@@ -18,6 +18,36 @@ export async function subscribeActivityRepository(data: activityPartipants) {
 }
 
 
+export async function concludeActivityRepository(id: string) {
+
+    return await prisma.activities.update({
+        where:{
+            id: id
+        },
+        data: {
+            completedAt: new Date(),
+        }
+       
+    });
+}
+
+export async function approveActivityParticipantRepository(id: string, userId: string, approve: boolean) {
+
+    return await prisma.activityParticipants.update({
+        where:{
+            activityId_userId:{
+                activityId: id,
+                userId: userId,
+            }
+        },
+        data: {
+            approved: approve,
+        }
+       
+    });
+}
+
+
 export async function getActivityRepository(
     page: number,
     pageSize: number,
@@ -110,16 +140,49 @@ export async function getActivityAllRepository(
 
 }
 
-export async function updateActivityRepository(data: activityData, id:string) {
+
+
+export async function updateActivityRepository(data: any, id:string) {
     
-    return await  prisma.activities.update({
+    const update = await prisma.activities.update({
             where:{
                 id: id,
             },
-            data
-        })
+            data,
+            include:{
+                activityAddresses:{
+                    select:{
+                        latitude: true,
+                        longitude: true
+                    }
+                }, 
+                creator:{
+                    select:{
+                        id: true,
+                        name: true,
+                        avatar: true
+                    }
+                }
+            },
+            omit:{
+                deletedAt: true
+            }
+                  
+        });
+
+    return update
 }
 
+export async function existingParticipant(id:string, userId: string) {
+    return await prisma.activityParticipants.findUnique({
+        where:{
+            activityId_userId:{
+                activityId: id,
+                userId: userId,
+            }
+        }
+    });
+}
 
 
 

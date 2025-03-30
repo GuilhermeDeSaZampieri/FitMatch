@@ -63,8 +63,8 @@ CREATE TABLE "activityParticipants" (
     "id" TEXT NOT NULL,
     "activityId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "approved" BOOLEAN NOT NULL,
-    "confirmedAt" TIMESTAMP(3) NOT NULL,
+    "approved" BOOLEAN NOT NULL DEFAULT false,
+    "confirmedAt" TIMESTAMP(3),
 
     CONSTRAINT "activityParticipants_pkey" PRIMARY KEY ("id")
 );
@@ -94,6 +94,18 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_cpf_key" ON "users"("cpf");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "preferences_typeId_userId_key" ON "preferences"("typeId", "userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "activityParticipants_activityId_userId_key" ON "activityParticipants"("activityId", "userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "activityTypes_name_key" ON "activityTypes"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "activityTypes_description_key" ON "activityTypes"("description");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "activityAddresses_activityId_key" ON "activityAddresses"("activityId");

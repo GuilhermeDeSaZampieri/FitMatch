@@ -1,10 +1,12 @@
 import { Express, Router } from "express";
 import authGuard from "../middlewares/authGuard";
-import {createActivityService, getActivityAllService, getActivityService, subscribeActivityService} from "../services/activityServices";
+import {approveActivityParticipantService, concludeActivityService, createActivityService, getActivityAllService, getActivityService, subscribeActivityService, updateActivityService} from "../services/activityServices";
 import validateRequestBody from "../middlewares/authValidation";
 import activityValidation from "../validations/activityValidations";
 import { getTypesActivityService } from "../services/activityTypeService";
 import { getActivityCreateByUserService, getAllActivityCreateByUserService } from "../services/userServices";
+import upload from "../multer/multer";
+import activityParticipantValidation from "../validations/activityParticipantValidation";
 
 
 
@@ -22,10 +24,6 @@ const activityController = (server: Express) => {
         catch(error: any){
             console.log(error);
 
-            if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
-                res.status(403).json({error: "Autenticação necessária."})    
-            }
-            
             if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
                 res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
             }
@@ -48,9 +46,6 @@ const activityController = (server: Express) => {
             catch(error: any){
                 console.log(error);
     
-                if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
-                    res.status(403).json({error: "Autenticação necessária."})    
-                }
                 
                 if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
                     res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
@@ -72,9 +67,6 @@ const activityController = (server: Express) => {
             catch(error: any){
                 console.log(error);
     
-                if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
-                    res.status(403).json({error: "Autenticação necessária."})    
-                }
                 
                 if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
                     res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
@@ -94,10 +86,7 @@ const activityController = (server: Express) => {
         }
             catch(error: any){
                 console.log(error);
-    
-                if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
-                    res.status(403).json({error: "Autenticação necessária."})    
-                }
+
                 
                 if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
                     res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
@@ -114,9 +103,6 @@ const activityController = (server: Express) => {
             catch(error: any){
                 console.log(error);
     
-                if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
-                    res.status(403).json({error: "Autenticação necessária."})    
-                }
                 
                 if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
                     res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
@@ -149,9 +135,6 @@ const activityController = (server: Express) => {
         }catch(error: any){
             console.log(error);
 
-            if(error.message === "Você precisa estar autorizado para acesar este endpoint."){
-                res.status(403).json({error: "Autenticação necessária."})    
-            }
             
             if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
                 res.status(403).json({error: "Esta conta foi desativada e não pode ser ultilizada."})    
@@ -172,7 +155,7 @@ const activityController = (server: Express) => {
 
 
             const create = await subscribeActivityService(data);
-            res.status(200).send(create);       
+            res.status(200).json(create);       
 
         }catch(error: any){
             console.log(error);
@@ -180,16 +163,82 @@ const activityController = (server: Express) => {
         }
     });
 
-    router.put("/id:/update", async (req ,res)=>{
+    router.put("/:id/update", upload.single("avatar"), async (req ,res)=>{
+        try{
+            
+            const data = req.body;
+            const id = req.params.id;
+
+            const avatar = req.file!.mimetype
+            data.image = avatar;
+            const updateActivity = await updateActivityService(data, id);
+            res.status(200).json(updateActivity);
+        }catch(error: any){
+            if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
+                res.status(403).json({error:error.message})    
+            }
+            if(error.message === "Atividade não encontrada")
+            {
+                res.status(404).json({error:error.message});
+                return
+            }
+            res.status(500).json({error:"Erro inesperado"});
+
+        }
+    });
+
+    router.put("/:id/conclude", async (req ,res)=>{
+
+        try{
+            
+            const id = req.params.id;
+
+            await concludeActivityService(id);
+            res.status(200).json({message:"Atividade concluida com sucesso"});
+
+        }catch(error: any){
+
+            if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
+                res.status(403).json({error:error.message})    
+            }
+            if(error.message === "Atividade não encontrada")
+            {
+                res.status(404).json({error:error.message});
+                return
+            }
+            res.status(500).json({error:"Erro inesperado"});
+
+        }
+        
         
     });
 
-    router.put("/id:/conclude", async (req ,res)=>{
-        
-    });
+    router.put("/:id/approve", validateRequestBody(activityParticipantValidation), async (req ,res)=>{
+        try{
+            
+            const id = req.params.id;
+            const {participantId,approved } = req.body
 
-    router.put("/id:/approve", async (req ,res)=>{
-        
+            await approveActivityParticipantService(id,participantId,approved);
+            res.status(200).json({message:"Solicitação de aprovação aprovada com sucesso"});
+
+        }catch(error: any){
+            console.log(error)
+
+            if(error.message === "Participante não encontrado."){
+                res.status(404).json({error:error.message})    
+            }
+            if(error.message === "Esta conta foi desativada e não pode ser ultilizada"){
+                res.status(403).json({error:error.message})    
+            }
+            if(error.message === "Atividade não encontrada")
+            {
+                res.status(404).json({error:error.message});
+                return
+            }
+            res.status(500).json({error:"Erro inesperado"});
+
+        }
     });
 
     router.put("/id:/check-in", async (req ,res)=>{

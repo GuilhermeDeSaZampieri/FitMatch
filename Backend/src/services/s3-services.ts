@@ -1,4 +1,4 @@
-import { CreateBucketCommand, S3Client } from "@aws-sdk/client-s3";
+import { CreateBucketCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 const bucketName = process.env.BUCKET_NAME!;
 
@@ -16,3 +16,16 @@ export async function createBucket() {
     await s3.send(new CreateBucketCommand({Bucket: bucketName}));
     console.log("Bucket");
 }
+
+export async function uploadImage(file:Express.Multer.File) {
+    const uploadParams = {
+        Bucket: bucketName,
+        Key: file.originalname,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+    }
+    await s3.send(new PutObjectCommand(uploadParams));
+    return `${process.env.S3_ENDPOINT}/${bucketName}/${file.originalname}`;
+
+}
+

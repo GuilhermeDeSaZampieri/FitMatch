@@ -17,7 +17,7 @@ export default function autoGuard(
     const authHeader = req.headers.authorization;
 
     if(!authHeader){
-        resp.status(401).json({error:"Você precisa estar autorizado para acesar este endpoint."});
+        resp.status(401).json({error:"Autenticação necessária"});
         return;
     }
 

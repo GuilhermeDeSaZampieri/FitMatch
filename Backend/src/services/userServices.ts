@@ -1,4 +1,4 @@
-import { getByEmail, getUserByid, updateUserRepository, softDeleteUser, getActivityCreateByUserRepository, getAllActivityCreateByUserRepository } from "../repository/userRepository";
+import { getByEmail, getUserByid, updateUserRepository, softDeleteUser, getActivityCreateByUserRepository, getAllActivityCreateByUserRepository, updateUserAvatar } from "../repository/userRepository";
 import bcrypt from "bcryptjs";
 
 
@@ -36,6 +36,22 @@ export async function updateUserService(data: any, id: string){
 
     return userFind;
 }
+
+
+export async function updateUserAvatarService(avatar:string, id: string){
+            
+
+        if (!avatar) {
+            throw new Error("nenhum arquivo foi enviado");
+        } 
+        if (avatar != "image/png" && avatar != "image/jpeg") {
+            throw new Error("Tipo de arquivo inválido. Apenas JPEG e PNG são permitidos.");
+        }
+    
+        return await updateUserAvatar(avatar, id);
+
+}
+
 
 export async function deleteUserService(id: string){
     

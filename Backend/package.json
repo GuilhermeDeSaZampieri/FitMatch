@@ -19,10 +19,12 @@
     "@aws-sdk/client-s3": "^3.777.0",
     "@aws-sdk/s3-request-presigner": "^3.777.0",
     "@prisma/client": "^6.5.0",
+    "@types/multer": "^1.4.12",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.2",
     "node": "^20.19.0",
     "zod": "^3.24.2"
   },

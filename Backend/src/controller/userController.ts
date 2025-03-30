@@ -1,9 +1,11 @@
 import { Express, Router, Request, Response, response } from "express";
 import authGuard from "../middlewares/authGuard";
-import { deleteUserService, getUsersByid , updateUserService} from "../services/userServices";
+import { deleteUserService, getUsersByid , updateUserAvatarService, updateUserService} from "../services/userServices";
 import userUpdateValidation from "../validations/userUpdateValidation";
 import validateRequestBody from "../middlewares/authValidation";
 import { getUserPreferencesService, preferenceService } from "../services/preferenceService";
+import upload from "../multer/multer";
+import { uploadImage } from "../services/s3-services";
 
 
 const userController = (server: Express) => {
@@ -63,9 +65,34 @@ const userController = (server: Express) => {
 
     
 
-    router.put("/avatar", async (req ,res)=>{
-        
-    });
+    router.put(
+        "/avatar", 
+        upload.single("avatar"),
+        async (req ,res)=>
+    {
+            try{
+                const avatar = req.file!.mimetype
+                console.log(avatar)
+
+                await uploadImage(req.file!);
+
+                const updateAvatar = await updateUserAvatarService(avatar,req.userId)
+                res.status(200).json(updateAvatar);
+                
+            }catch(error: any){
+                if(error.message === "nenhum arquivo foi enviado"){
+                    res.status(400).json({error:error.message});
+                    return
+                }
+                if(error.message === "Tipo de arquivo inválido. Apenas JPEG e PNG são permitidos."){
+                    res.status(400).json({error:error.message});
+                    return
+                }
+                res.status(500).json({error: "Erro inesperado"})
+                
+            }
+
+            });
 
     router.put("/update", validateRequestBody(userUpdateValidation), async (req ,res)=>{
         try{

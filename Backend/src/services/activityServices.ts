@@ -1,8 +1,9 @@
-import { createActivityRepository, getActivityRepository, getActivityAllRepository, subscribeActivityRepository, updateActivityRepository } from "../repository/activityRepository";
+import { createActivityRepository, getActivityRepository, getActivityAllRepository, subscribeActivityRepository, updateActivityRepository, concludeActivityRepository, approveActivityParticipantRepository, existingParticipant } from "../repository/activityRepository";
 import activityData from "../types/activityData";
 import activityPartipants from "../types/activityParticipants";
-import { createActivityAddressesService } from "./ActivityAddressesService";
+import { createActivityAddressesService, updateActivityAdressService } from "./ActivityAddressesService";
 import { getUsersByid } from "./userServices";
+import { existingAddress } from "../repository/ActivityAddressesRepository";
 
 export async function createActivityService(data: activityData, userId: string){
 
@@ -50,18 +51,72 @@ export async function createActivityService(data: activityData, userId: string){
 }
 
 
-
-export async function updateActivityService(data: activityData, id: string){
+export async function concludeActivityService(id:string) {
     
+    const existing = await existingAddress(id);
 
-    const activityFind  = await updateActivityRepository(data, id);
-
-    if(!activityFind){
+    if (!existing) {
         throw new Error("Atividade não encontrada");
-    } else if(activityFind.deletedAt){
-        throw new Error("Esta conta foi desativada e não pode ser ultilizada");
+    }
+    
+    const conclude = await concludeActivityRepository(id);
+    return conclude
+}
+
+
+export async function approveActivityParticipantService(id:string, userId: string, aprrove: boolean) {
+    
+    const existingPart = await existingParticipant(id, userId);
+
+
+    if(!existingPart){
+        throw new Error("Participante não encontrado.");
+    }
+    
+    const aproved = await approveActivityParticipantRepository(id, userId, aprrove);
+    return aproved
+}
+
+
+
+export async function updateActivityService(data: activityData, id:string){
+
+    if(!data.image){
+        if (!data.image) {
+            throw new Error("nenhum arquivo foi enviado");
+        } 
+        if (data.image != "image/png" && data.image != "image/jpeg") {
+            throw new Error("Tipo de arquivo inválido. Apenas JPEG e PNG são permitidos.");
+        }
     }
 
+    const activity = {
+        title: data.title,
+        description: data.description,
+        image: data.image,
+        scheduledDate: data.scheduledDate,
+        private: data.private,
+        activityTypes: {
+            connect: { id: data.typeId } 
+        },
+    };
+    const newAdress = {
+        latitude: data.address.latitude,
+        longitude: data.address.longitude,
+        activityId: id
+    };
+
+    const existing = await existingAddress(id);
+
+    if (!existing) {
+        throw new Error("Atividade não encontrada");
+    }
+
+    
+    await updateActivityAdressService(newAdress);
+
+    const activityFind = await updateActivityRepository(activity, id);
+    
     return activityFind;
 }
 
