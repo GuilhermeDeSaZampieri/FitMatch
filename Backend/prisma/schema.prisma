@@ -35,11 +35,12 @@ model UserAchievements{
   achievements Achievements @relation(fields: [achievementId], references: [id])
   achievementId String
   @@map("userAchievements")
+  @@unique([userId, achievementId])
 }
 
 model Achievements{
   id          String @id @default(uuid())
-  name String
+  name String @unique
   criterion String
 
   userAchievements UserAchievements[]

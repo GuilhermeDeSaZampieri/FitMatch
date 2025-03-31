@@ -74,9 +74,9 @@ const userController = (server: Express) => {
                 const avatar = req.file!.mimetype
                 console.log(avatar)
 
-                await uploadImage(req.file!);
+                const newAvatar = await uploadImage(req.file!);
 
-                const updateAvatar = await updateUserAvatarService(avatar,req.userId)
+                const updateAvatar = await updateUserAvatarService(avatar,req.userId, newAvatar)
                 res.status(200).json(updateAvatar);
                 
             }catch(error: any){

@@ -1,4 +1,4 @@
-import { createActivityRepository, getActivityRepository, getActivityAllRepository, subscribeActivityRepository, updateActivityRepository, concludeActivityRepository, approveActivityParticipantRepository, existingParticipant } from "../repository/activityRepository";
+import { createActivityRepository, getActivityRepository, getActivityAllRepository, subscribeActivityRepository, updateActivityRepository, concludeActivityRepository, approveActivityParticipantRepository, existingParticipant, CheckinActivityRepository, deleteActivityRepository } from "../repository/activityRepository";
 import activityData from "../types/activityData";
 import activityPartipants from "../types/activityParticipants";
 import { createActivityAddressesService, updateActivityAdressService } from "./ActivityAddressesService";
@@ -68,12 +68,17 @@ export async function approveActivityParticipantService(id:string, userId: strin
     
     const existingPart = await existingParticipant(id, userId);
 
-
     if(!existingPart){
         throw new Error("Participante não encontrado.");
     }
     
     const aproved = await approveActivityParticipantRepository(id, userId, aprrove);
+    return aproved
+}
+
+export async function CheckinActivityService(id:string, code: string) {
+    
+    const aproved = await CheckinActivityRepository(id, code);
     return aproved
 }
 
@@ -146,6 +151,19 @@ export async function getActivityAllService(
     
     return all;
 }
+
+export async function deleteActivityServicer(id:string) {
+    
+    const existingActivity = await existingAddress(id);
+
+    if(!existingActivity){
+        throw new Error("Atividade não encontrada");
+    }
+    
+    const aproved = await deleteActivityRepository(id);
+    return aproved
+}
+
 
 
 function creatorCode() {

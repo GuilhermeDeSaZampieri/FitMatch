@@ -38,7 +38,7 @@ export async function updateUserService(data: any, id: string){
 }
 
 
-export async function updateUserAvatarService(avatar:string, id: string){
+export async function updateUserAvatarService(avatar:string, id: string, newAvatar: string){
             
 
         if (!avatar) {
@@ -48,7 +48,7 @@ export async function updateUserAvatarService(avatar:string, id: string){
             throw new Error("Tipo de arquivo inválido. Apenas JPEG e PNG são permitidos.");
         }
     
-        return await updateUserAvatar(avatar, id);
+        return await updateUserAvatar(newAvatar, id);
 
 }
 

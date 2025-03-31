@@ -1,5 +1,4 @@
 import prisma from "../prisma/prismaClient";
-import activityData from "../types/activityData";
 import activityPartipants from "../types/activityParticipants"; 
 
 export async function createActivityRepository(data: any) {
@@ -183,6 +182,36 @@ export async function existingParticipant(id:string, userId: string) {
         }
     });
 }
+
+export async function CheckinActivityRepository(id:string, code: string) {
+    return await prisma.activities.update({
+        where:{
+            id: id,
+            confirmationCode: code
+        },
+        data:{
+
+        }
+    });
+}
+
+
+export async function deleteActivityRepository(id:string) {
+    await prisma.activityParticipants.deleteMany({
+        where: {activityId: id,},
+    });
+
+    await prisma.activityAddresses.deleteMany({
+        where: { activityId: id },
+    });
+    
+    return await prisma.activities.delete({
+        where:{
+            id: id,
+        },
+    });
+}
+
 
 
 
