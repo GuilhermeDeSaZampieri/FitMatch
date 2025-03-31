@@ -1,15 +1,18 @@
-version: '3.8'
-services: 
-  postgresql: 
-    image: postgres 
+version: "3.8"
+
+services:
+  postgresql:
+    image: postgres
     container_name: BancoDeDados
-    environment: 
+    environment:
       POSTGRES_USER: bootcamp
       POSTGRES_PASSWORD: bootcamp
       POSTGRES_DB: bootcamp
-    ports: 
+    ports:
       - "5433:5432"
-  
+    networks:
+      - app-network
+
   localstack:
     image: localstack/localstack
     container_name: localstack
@@ -20,3 +23,27 @@ services:
       AWS_REGION: us-east-1
       AWS_ACCESS_KEY: test
       AWS_SECRET_ACCESS_KEY: test
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://bootcamp:bootcamp@postgresql:5432/bootcamp
+      POSTGRES_HOST: postgresql
+      S3_ENDPOINT: http://localstack:4566
+      AWS_ACCESS_KEY: test
+      AWS_SECRET_ACCESS_KEY: test
+    depends_on:
+      - postgresql
+      - localstack
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

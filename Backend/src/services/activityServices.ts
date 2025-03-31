@@ -106,12 +106,16 @@ export async function CheckinActivityService(id: string, code: string) {
   return aproved;
 }
 
-export async function updateActivityService(data: activityData, id: string) {
-  if (!data.image) {
-    if (!data.image) {
+export async function updateActivityService(
+  data: activityData,
+  id: string,
+  avatar: string
+) {
+  if (!avatar) {
+    if (!avatar) {
       throw new Error("nenhum arquivo foi enviado");
     }
-    if (data.image != "image/png" && data.image != "image/jpeg") {
+    if (avatar != "image/png" && avatar != "image/jpeg") {
       throw new Error(
         "Tipo de arquivo inválido. Apenas JPEG e PNG são permitidos."
       );
@@ -123,11 +127,16 @@ export async function updateActivityService(data: activityData, id: string) {
     description: data.description,
     image: data.image,
     scheduledDate: data.scheduledDate,
-    private: data.private,
+    private: JSON.parse(String(data.private)),
     activityTypes: {
       connect: { id: data.typeId },
     },
   };
+
+  if (typeof data.address === "string") {
+    data.address = JSON.parse(data.address);
+  }
+
   const newAdress = {
     latitude: data.address.latitude,
     longitude: data.address.longitude,
