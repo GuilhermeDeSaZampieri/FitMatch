@@ -17,8 +17,8 @@ Antes de iniciar, certifique-se de ter instalado em sua máquina:
 1. **Clone o repositório:**
 
    ```sh
-   git clone https://github.com/seu-usuario/seu-repositorio.git
-   cd seu-repositorio
+   git clone https://github.com/bc-fullstack-06/Guilherme-De-S-mita-Zampieri.git
+   cd Backend
 
    ```
 
