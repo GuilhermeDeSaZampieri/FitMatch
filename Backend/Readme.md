@@ -1,6 +1,6 @@
 # Backend API
 
-Este projeto é uma API desenvolvida em Node.js utilizando Express, TypeScript, Prisma como ORM, PostgreSQL como banco de dados, e Docker para containerização. Também utiliza Jest para testes.
+Este projeto é uma API desenvolvida em Node.js utilizando Express, TypeScript, Prisma como ORM, PostgreSQL como banco de dados, e Docker para containerização.
 
 ## 🚀 Configuração do Ambiente
 
