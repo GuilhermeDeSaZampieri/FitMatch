@@ -1,6 +1,6 @@
 # Backend API
 
-Este projeto é uma API desenvolvida em Node.js utilizando Express, TypeScript, Prisma como ORM, PostgreSQL como banco de dados, e Docker para containerização. Também utiliza Jest para testes.
+Este projeto é uma API desenvolvida em Node.js utilizando Express, TypeScript, Prisma como ORM, PostgreSQL como banco de dados, e Docker para containerização.
 
 ## 🚀 Configuração do Ambiente
 
@@ -17,8 +17,8 @@ Antes de iniciar, certifique-se de ter instalado em sua máquina:
 1. **Clone o repositório:**
 
    ```sh
-   git clone https://github.com/seu-usuario/seu-repositorio.git
-   cd seu-repositorio
+   git clone https://github.com/bc-fullstack-06/Guilherme-De-S-mita-Zampieri.git
+   cd Backend
 
    ```
 
