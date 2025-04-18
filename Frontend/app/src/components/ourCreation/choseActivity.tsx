@@ -7,27 +7,18 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AlertDialogTitle } from "@radix-ui/react-alert-dialog";
 import { TypeActivities } from "./typeActivity";
-import { api, getAuthorization, getHeaders } from "@/services/apiService";
+import { api, getAuthorization } from "@/services/apiService";
 import { useEffect, useState } from "react";
 
 function ChoseActivity() {
   const [activityType, setActivityType] = useState([]);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     setOpenDialog(true);
   }, []);
 
-  const toggleSelection = (id: number) => {
-    setSelectedIds((prevSelectedIds) => {
-      if (prevSelectedIds.includes(id)) {
-        return prevSelectedIds.filter((selectedId) => selectedId !== id);
-      } else {
-        return [...prevSelectedIds, id];
-      }
-    });
-  };
+  
 
   useEffect(() => {
     const fetchActivityType = () => {
@@ -44,16 +35,6 @@ function ChoseActivity() {
     fetchActivityType();
   }, []);
 
-  const onSubmit = (data: any) => {
-    api
-      .post("/users/preferences/define", JSON.stringify(data), getHeaders())
-      .then((response) => {
-        console.log("Preferências salvas com sucesso:", response.data);
-      })
-      .catch((error) => {
-        console.error("Erro ao salvar preferências:", error);
-      });
-  };
 
   return (
     <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
@@ -66,16 +47,14 @@ function ChoseActivity() {
           {activityType.map((data) => (
             <TypeActivities
               data={data}
-              toggleSelection={toggleSelection}
-              isSelected={selectedIds.includes(data)}
             />
+            
           ))}
         </div>
 
         <AlertDialogFooter className="text-[16px] font-bold leading-6 h-12 w-full grid grid-cols-1 sm:grid-cols-2 gap-1.5">
           <AlertDialogAction
             className="bg-[#00BC7D] font-bold h-full"
-            onClick={() => onSubmit({ selectedActivities: selectedIds })}
           >
             Confirmar
           </AlertDialogAction>
