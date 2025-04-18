@@ -26,12 +26,13 @@ function Password({ field }: PasswordProps) {
       </FormLabel>
       <div className="relative flex items-center">
         <FormControl className="w-full">
-          <Input
+           <Input
             type={typePass}
             placeholder="Ex.: joao123"
             className="pr-10"
             {...field}
           />
+          
         </FormControl>
 
         <div onClick={Show} className="cursor-pointer absolute right-4">

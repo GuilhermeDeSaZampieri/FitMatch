@@ -11,6 +11,18 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
+import { api, getAuthorization } from "@/services/apiService";
+
+
+const desactiveUser = () =>{
+  api.delete("/user/deactivate" ,getAuthorization())
+  .then(()=>{
+    console.log("Desativado com sucesso");
+  }).catch((error) =>{
+    console.log(error);
+  })
+}
+
 
 function AlertButton() {
   return (
@@ -39,7 +51,7 @@ function AlertButton() {
           <AlertDialogCancel className="text-[#171717] font-bold border-[#171717]">
             Cancelar
           </AlertDialogCancel>
-          <AlertDialogAction className="bg-[#E7000B] font-bold">
+          <AlertDialogAction onClick={desactiveUser} className="bg-[#E7000B] font-bold">
             Desativar
           </AlertDialogAction>
         </AlertDialogFooter>

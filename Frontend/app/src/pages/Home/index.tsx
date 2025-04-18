@@ -10,16 +10,31 @@ import { Ban, CalendarOff, Check, Pencil, X } from "lucide-react";
 import { ModalOrganizatorActivity } from "@/components/ourCreation/modal/organizatorVisualization";
 import flag from "../../assets/images/flagImg.png";
 import { ModalCheckInActivity } from "@/components/ourCreation/modal/checkIn";
+import { useEffect, useState } from "react";
+import { api, getAuthorization } from "@/services/apiService";
 
 function Home() {
+  const [hasPreferences, setHasPreferences] = useState(false);
+
+  useEffect(() => {
+    api
+      .get("/user/preferences", getAuthorization())
+      .then((res) => {
+        if (res.data && res.data.length > 0) {
+          setHasPreferences(true); // Já tem preferências definidas
+        }
+      })
+      .catch((err) => console.error(err));
+  }, []);
+
   return (
     <>
-      <ChoseActivity />
 
       <main className=" px-[110px] pt-6 grid gap-14 justify-items-center mb-7">
         <NavBar />
 
         <section className="w-full ">
+        {!hasPreferences && <ChoseActivity />}
           <div>
             <h1 className="font-heading text-[#171717] text-[1.75rem] leading-[2rem]">
               RECOMENDADO PARA VOCÊ

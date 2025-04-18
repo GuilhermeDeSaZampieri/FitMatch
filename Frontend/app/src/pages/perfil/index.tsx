@@ -8,7 +8,32 @@ import { NavBar } from "@/components/ourCreation/navBar";
 import { Activities } from "@/components/ourCreation/activitys";
 import { Link } from "react-router";
 
+import { api, getAuthorization } from "@/services/apiService";
+import { useEffect, useState } from "react";
+
 function Perfil() {
+  const [level, setLevel] = useState("");
+  const [name, setName] = useState("");
+  const [xp, setXp] = useState("");
+
+  const getUser = () => {
+    api
+      .get(`/user`, getAuthorization())
+      .then((response) => {
+        setName(response.data.name);
+        setLevel(response.data.level);
+        setXp(response.data.xp);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
   return (
     <>
       <main className=" px-[110px] pt-6 grid gap-14 justify-items-center">
@@ -33,7 +58,7 @@ function Perfil() {
               </div>
               <div className=" flex items-end justify-center h-full">
                 <h1 className=" text-center text-[2rem] text-[#171717] leading-[2.25rem] font-heading">
-                  JOÃO SILVA
+                  {name}
                 </h1>
               </div>
             </div>
@@ -45,7 +70,7 @@ function Perfil() {
                       <h2 className="font-semibold text-[0.75rem]">
                         Seu nível é
                       </h2>
-                      <h1 className="font-bold text-2xl">8</h1>
+                      <h1 className="font-bold text-2xl">{level}</h1>
                     </div>
                     <img src={trophy} />
                   </div>
@@ -56,7 +81,7 @@ function Perfil() {
                         <p>Pontos para o próximo nível</p>
                         <h1 className="h-full">25/50 pts</h1>
                       </div>
-                      <Progress value={33} />
+                      <Progress value={parseInt(xp)} />
                     </div>
                   </div>
                 </div>

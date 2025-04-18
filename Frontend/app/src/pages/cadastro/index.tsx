@@ -20,19 +20,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api, getHeaders } from "@/services/apiService";
 import { useState } from "react";
-
-const formSchema = z.object({
-  name: z.string({ message: "Este campo é obrigatório!" }),
-  cpf: z.string({ message: "Este campo é obrigatório!" }).regex(/^\d{11}$/, {
-    message: "O CPF deve conter apenas números e ter 11 dígitos",
-  }),
-  email: z
-    .string({ message: "Este campo é obrigatório!" })
-    .email({ message: "E-mail inválido" }),
-  password: z
-    .string({ message: "Este campo é obrigatório!" })
-    .min(6, { message: "A senha deve ter no mínimo 6 caracteres" }),
-});
+import { formSchema } from "@/zod/userZod";
 
 function Cadastro() {
   const [getError, setGetError] = useState();
@@ -139,6 +127,8 @@ function Cadastro() {
                       )}
                     ></FormField>
 
+                  
+
                     <FormField
                       control={form.control}
                       name="password"
@@ -149,6 +139,7 @@ function Cadastro() {
                         </FormItem>
                       )}
                     ></FormField>
+                    
                   </div>
                   <div className="">
                     <Button className="w-full h-12 bg-emerald-500 ">
